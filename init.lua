@@ -1,0 +1,26 @@
+require("config.vimsettings")
+require("config.lazy")
+
+vim.lsp.enable('lua_ls')
+vim.lsp.config("lua_ls", {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" }
+            }
+        }
+    }
+})
+vim.lsp.enable('sourcekit')
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client:supports_method('textDocument/completion') then
+      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+    end
+  end,
+})
+
+vim.lsp.enable('gopls')
+
+vim.cmd("set completeopt+=noselect")
